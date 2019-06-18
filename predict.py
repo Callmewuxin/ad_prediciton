@@ -63,24 +63,30 @@ def photo():
     data['Success'] = True
     imglist = []
     img = request.files.get('file')
+    print(img)
     path = "static/photo/"
     for i in os.listdir(path):
         path_file = os.path.join(path, i)
         if os.path.isfile(path_file):
             os.remove(path_file)
-    file_path = path + img.filename
+    file_path = os.path.join(path + img.filename)
+    print(file_path)
     img.save(file_path)
     imglist.append(file_path)
     X = prepPNGimgs(imglist)
-    preds = model.predict(X).round()
+    print(X[0].shape)
+    data['prediction'] = "AD"
+    with graph.as_default():
+        preds = model.predict(X).round()
     if preds[0][1] == 1:
-        data["prediciton"] = "Alzheimer’s Disease(AD)"
+        data["prediction"] = "Alzheimer’s Disease(AD)"
     else:
-        data["prediciton"] = "No Condition(NC)"
+        data["prediction"] = "No Condition(NC)"
+    
+
     return flask.jsonify(data)
 
-
 print("start server")
-# loadmodel()
+loadmodel()
 if __name__ == "__main__":
     app.run()
