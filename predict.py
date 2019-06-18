@@ -60,19 +60,27 @@ def index():
 @app.route('/photo', methods=['GET', 'POST'])
 def photo():
     data = dict()
+    data['Success'] = True
     imglist = []
     img = request.files.get('file')
-    imgname = img.filename
-    imglist.append(imgname)
+    path = "static/photo/"
+    for i in os.listdir(path):
+        path_file = os.path.join(path, i)
+        if os.path.isfile(path_file):
+            os.remove(path_file)
+    file_path = path + img.filename
+    img.save(file_path)
+    imglist.append(file_path)
     X = prepPNGimgs(imglist)
     preds = model.predict(X).round()
-    for i in range(preds.shape[0]):
-        if preds[i][1] == 1:
-            print("Alzheimer’s Disease(AD)")
-        else:
-            print("No Condition(NC)")
+    if preds[0][1] == 1:
+        data["prediciton"] = "Alzheimer’s Disease(AD)"
+    else:
+        data["prediciton"] = "No Condition(NC)"
+    return flask.jsonify(data)
+
 
 print("start server")
-loadmodel()
+# loadmodel()
 if __name__ == "__main__":
     app.run()
