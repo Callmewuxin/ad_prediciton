@@ -53,12 +53,13 @@ def prepPNGimgs(array_of_image_paths):
 
 
 loadmodel()
-imglist = []
-img = cv2.imread()
-imgname = img.filename
-imglist.append(imgname)
+dirname = "OASIS_MR1_pngs/OAS1_0058_MR1"
+imglist = os.listdir(dirname)
+imglist = [os.path.join(dirname, i) for i in imglist]
 X = prepPNGimgs(imglist)
-if X[0][1] == 1:
-    print("Alzheimer’s Disease(AD)")
-else:
-    print("No Condition(NC)")
+preds = model.predict(X)
+for i in range(preds.shape[0]):
+    if preds[i][1] == 1:
+        print("Alzheimer’s Disease(AD)")
+    else:
+        print("No Condition(NC)")

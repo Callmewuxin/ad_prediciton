@@ -65,12 +65,12 @@ def photo():
     imgname = img.filename
     imglist.append(imgname)
     X = prepPNGimgs(imglist)
-    if X[0][1] == 1:
-        data["prediction"] = "Alzheimer’s Disease(AD)"
-    else:
-        data["prediction"] = "No Condition(NC)"
-    print(data)
-    return flask.jsonify(data)
+    preds = model.predict(X).round()
+    for i in range(preds.shape[0]):
+        if preds[i][1] == 1:
+            print("Alzheimer’s Disease(AD)")
+        else:
+            print("No Condition(NC)")
 
 print("start server")
 loadmodel()
